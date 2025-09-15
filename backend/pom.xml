@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pepe</groupId>
-	<artifactId>food-forge</artifactId>
+	<artifactId>foodforge</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>food-forge</name>
+	<name>foodforge</name>
 	<description>A powerful food planner</description>
 	<url/>
 	<licenses>
