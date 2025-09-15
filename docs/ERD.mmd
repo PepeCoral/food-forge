@@ -1,0 +1,46 @@
+erDiagram
+	direction TB
+	USER {
+		int id_USER PK
+		string name
+		string email
+        string password
+	}
+
+	HOUSE {
+		int id_HOUSE PK
+		string name
+	}
+
+	HOUSE_USER {
+		int id_HOUSE FK
+		int id_USER FK
+	}
+
+	RECIPE {
+		int id_RECIPE PK
+		string name
+		string description
+        string explanation
+		int id_USER FK
+	}
+
+	INGREDIENT {
+		int id_INGREDIENT PK
+        int id_HOUSE FK
+		string name
+	}
+
+	RECIPE_INGREDIENT {
+		int id_RECIPE FK
+		int id_INGREDIENT FK
+		float amount
+		string unit
+	}
+
+	USER||--o{HOUSE_USER:"belongs_to"
+	HOUSE||--o{HOUSE_USER:"has"
+	HOUSE||--o{RECIPE:"manages"
+    HOUSE||--o{INGREDIENT:"belongs_to"
+	RECIPE||--o{RECIPE_INGREDIENT:"contains"
+	INGREDIENT||--o{RECIPE_INGREDIENT:"is_used_in"
