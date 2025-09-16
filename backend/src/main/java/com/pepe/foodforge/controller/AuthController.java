@@ -2,6 +2,7 @@ package com.pepe.foodforge.controller;
 
 import com.pepe.foodforge.dto.AuthResponse;
 import com.pepe.foodforge.dto.LoginRequest;
+import com.pepe.foodforge.dto.SignUpRequest;
 import com.pepe.foodforge.entity.User;
 import com.pepe.foodforge.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class AuthController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<AuthResponse> signup(@RequestBody User user) {
-    String token = authService.signup(user);
+  public ResponseEntity<AuthResponse> signup(@RequestBody SignUpRequest signUpRequest) {
+    String token = authService.signup(signUpRequest);
     return ResponseEntity.ok(new AuthResponse("User registered and logged in", token));
   }
 

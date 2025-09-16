@@ -1,6 +1,7 @@
 package com.pepe.foodforge.service;
 
 import com.pepe.foodforge.dto.LoginRequest;
+import com.pepe.foodforge.dto.SignUpRequest;
 import com.pepe.foodforge.entity.User;
 import com.pepe.foodforge.exception.AuthException;
 import com.pepe.foodforge.repository.UserRepository;
@@ -26,12 +27,15 @@ public class AuthService {
     this.jwtUtil = jwtUtil;
   }
 
-  public String signup(User user) {
-    if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+  public String signup(SignUpRequest signUpRequest) {
+    if (userRepository.findByUsername(signUpRequest.getUsername()).isPresent()) {
       throw new AuthException("Username already taken", HttpStatus.BAD_REQUEST);
     }
 
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    User user = new User();
+    user.setUsername(signUpRequest.getUsername());
+    user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+
     userRepository.save(user);
 
     return jwtUtil.generateToken(user.getUsername());

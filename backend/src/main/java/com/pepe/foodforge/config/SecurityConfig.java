@@ -21,6 +21,8 @@ public class SecurityConfig {
             .frameOptions(frameOptions -> frameOptions.sameOrigin()))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/api-docs/**").permitAll()
+            .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
