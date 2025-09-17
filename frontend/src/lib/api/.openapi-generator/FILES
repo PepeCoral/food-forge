@@ -1,0 +1,12 @@
+.gitignore
+.npmignore
+api.ts
+base.ts
+common.ts
+configuration.ts
+docs/AuthControllerApi.md
+docs/LoginRequest.md
+docs/RecipeControllerApi.md
+docs/SignUpRequest.md
+git_push.sh
+index.ts

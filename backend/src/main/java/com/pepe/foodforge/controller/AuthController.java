@@ -5,8 +5,15 @@ import com.pepe.foodforge.dto.LoginRequest;
 import com.pepe.foodforge.dto.SignUpRequest;
 import com.pepe.foodforge.entity.User;
 import com.pepe.foodforge.service.AuthService;
+
+import java.time.Duration;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.ServerRequest.Headers;
 
 @RestController
 @RequestMapping("/auth")
@@ -14,19 +21,45 @@ public class AuthController {
 
   private final AuthService authService;
 
+  @Value("${jwt.expiration-ms}")
+  private long tokenExpirationMs;
+
   public AuthController(AuthService authService) {
     this.authService = authService;
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<AuthResponse> signup(@RequestBody SignUpRequest signUpRequest) {
+  public ResponseEntity<String> signup(@RequestBody SignUpRequest signUpRequest) {
     String token = authService.signup(signUpRequest);
-    return ResponseEntity.ok(new AuthResponse("User registered and logged in", token));
+
+    ResponseCookie cookie = ResponseCookie.from("jwt", token)
+        .httpOnly(true)
+        .path("/")
+        .secure(false)
+        .sameSite("Lax")
+        .maxAge(Duration.ofSeconds(tokenExpirationMs))
+        .build();
+
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body("{\"message\": \"User registered and logged in\"}");
   }
 
   @PostMapping("/login")
-  public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+  public ResponseEntity<String> login(@RequestBody LoginRequest request) {
     String token = authService.login(request);
-    return ResponseEntity.ok(new AuthResponse("Login successful", token));
+
+    ResponseCookie cookie = ResponseCookie.from("jwt", token)
+        .httpOnly(true)
+        .path("/")
+        .secure(false)
+        .sameSite("Lax")
+        .maxAge(Duration.ofSeconds(tokenExpirationMs))
+        .build();
+
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body("{\"message\": \"Login successful\"}");
+
   }
 }

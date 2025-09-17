@@ -3,6 +3,7 @@ package com.pepe.foodforge.config;
 import com.pepe.foodforge.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,20 +30,38 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       FilterChain filterChain)
       throws ServletException, IOException {
 
-    final String authHeader = request.getHeader("Authorization");
+    String token = null;
 
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-      String token = authHeader.substring(7);
+    token = getJwtFromCookies(request, token);
+
+    checkToken(token);
+    filterChain.doFilter(request, response);
+
+  }
+
+  private void checkToken(String token) {
+    if (token != null) {
       if (jwtUtil.validateToken(token)) {
         String username = jwtUtil.extractUsername(token);
         var auth = new UsernamePasswordAuthenticationToken(
             username,
             null,
-            List.of(new SimpleGrantedAuthority("ROLE_USER")));
+            List.of());
         SecurityContextHolder.getContext().setAuthentication(auth);
       }
     }
+  }
 
-    filterChain.doFilter(request, response);
+  private String getJwtFromCookies(HttpServletRequest request, String token) {
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if ("jwt".equals(cookie.getName())) {
+          token = cookie.getValue();
+          break;
+        }
+      }
+    }
+    return token;
   }
 }
